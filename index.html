@@ -410,14 +410,15 @@ footer{padding:70px 32px 46px;border-top:1px solid var(--line)}
 </footer>
 
 <script>
-/* ---------- animated ontology graph hero ---------- */
+/* ---------- animated ontology graph hero (v2 — lively) ---------- */
 (function(){
   const canvas = document.getElementById('graph');
   const ctx = canvas.getContext('2d');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const COLORS = {point:'#f2c94c', equip:'#6fcf97', loc:'#eb5757', vs:'#2f80ed'};
   const TYPES = ['point','point','point','point','point','equip','equip','equip','loc','vs','vs'];
-  let W,H,nodes=[],edges=[],dpr=1;
+  let W,H,nodes=[],edges=[],packets=[],dpr=1;
+  let mouseX=.5, mouseY=.5;   // normalized pointer for parallax
 
   function resize(){
     dpr = Math.min(window.devicePixelRatio||1, 2);
@@ -427,20 +428,26 @@ footer{padding:70px 32px 46px;border-top:1px solid var(--line)}
   }
 
   function build(){
-    nodes = []; edges = [];
+    nodes = []; edges = []; packets = [];
     const n = Math.max(26, Math.min(64, Math.floor(W*H/26000)));
     for(let i=0;i<n;i++){
       const type = TYPES[Math.floor(Math.random()*TYPES.length)];
       nodes.push({
-        x:Math.random()*W, y:Math.random()*H,
-        vx:(Math.random()-.5)*.22, vy:(Math.random()-.5)*.22,
-        r: type==='equip' ? 3.4 : type==='vs' ? 3.0 : 2.4,
-        type, phase:Math.random()*Math.PI*2
+        // home position (anchor) + orbit params for organic wobble
+        hx:Math.random()*W, hy:Math.random()*H,
+        x:0, y:0,
+        driftA:Math.random()*Math.PI*2,          // drift angle
+        driftS:.35 + Math.random()*.45,          // drift speed (px/frame) — clearly visible
+        orbitR:6 + Math.random()*14,             // wobble radius
+        orbitS:.4 + Math.random()*.8,            // wobble speed
+        r: type==='equip' ? 3.6 : type==='vs' ? 3.2 : 2.6,
+        type, phase:Math.random()*Math.PI*2,
+        depth:.5 + Math.random()*.5              // parallax depth
       });
     }
     // sparse semantic-looking links: each node connects to 1–2 nearest neighbors
     for(let i=0;i<nodes.length;i++){
-      const d = nodes.map((m,j)=>({j, dist:(m.x-nodes[i].x)**2+(m.y-nodes[i].y)**2}))
+      const d = nodes.map((m,j)=>({j, dist:(m.hx-nodes[i].hx)**2+(m.hy-nodes[i].hy)**2}))
                      .filter(o=>o.j!==i).sort((a,b)=>a.dist-b.dist);
       const k = 1 + (Math.random()<.4?1:0);
       for(let c=0;c<k && c<d.length;c++){
@@ -450,43 +457,107 @@ footer{padding:70px 32px 46px;border-top:1px solid var(--line)}
     }
   }
 
+  // spawn a glowing "data packet" that travels along a random edge
+  function spawnPacket(){
+    if(!edges.length) return;
+    const e = edges[Math.floor(Math.random()*edges.length)];
+    const rev = Math.random()<.5;
+    packets.push({
+      a: rev ? e.b : e.a,
+      b: rev ? e.a : e.b,
+      p: 0,                                   // progress 0→1
+      speed: .006 + Math.random()*.010,
+      color: COLORS[nodes[rev ? e.a : e.b].type]
+    });
+  }
+
   let t=0;
   function frame(){
     ctx.clearRect(0,0,W,H);
-    t += .008;
-    // edges
+    t += .016;
+
+    // update node positions: slow drift of anchor + orbital wobble + parallax
+    const px = (mouseX-.5)*30, py = (mouseY-.5)*30;
+    for(const p of nodes){
+      if(!reduced){
+        p.hx += Math.cos(p.driftA)*p.driftS;
+        p.hy += Math.sin(p.driftA)*p.driftS;
+        p.driftA += (Math.random()-.5)*.02;   // gentle direction wander
+        if(p.hx<-30)p.hx=W+30; if(p.hx>W+30)p.hx=-30;
+        if(p.hy<-30)p.hy=H+30; if(p.hy>H+30)p.hy=-30;
+        p.x = p.hx + Math.cos(t*p.orbitS + p.phase)*p.orbitR + px*p.depth;
+        p.y = p.hy + Math.sin(t*p.orbitS*1.3 + p.phase)*p.orbitR + py*p.depth;
+      } else {
+        p.x = p.hx; p.y = p.hy;
+      }
+    }
+
+    // edges (with a slow breathing opacity)
     ctx.lineWidth = 1;
     for(const e of edges){
       const a=nodes[e.a], b=nodes[e.b];
       const dx=a.x-b.x, dy=a.y-b.y, dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist>260) continue;
-      const alpha = .16*(1-dist/260);
+      if(dist>300) continue;
+      const breathe = reduced ? 1 : (.75 + .25*Math.sin(t*.8 + e.a));
+      const alpha = .18*(1-dist/300)*breathe;
       ctx.strokeStyle = 'rgba(242,244,248,'+alpha.toFixed(3)+')';
       ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
     }
-    // nodes
-    for(const p of nodes){
-      if(!reduced){
-        p.x += p.vx; p.y += p.vy;
-        if(p.x<-20)p.x=W+20; if(p.x>W+20)p.x=-20;
-        if(p.y<-20)p.y=H+20; if(p.y>H+20)p.y=-20;
+
+    // data packets flowing along edges
+    if(!reduced){
+      if(Math.random()<.06 && packets.length<14) spawnPacket();
+      for(let i=packets.length-1;i>=0;i--){
+        const k = packets[i];
+        k.p += k.speed;
+        if(k.p>=1){ packets.splice(i,1); continue; }
+        const a=nodes[k.a], b=nodes[k.b];
+        const x = a.x + (b.x-a.x)*k.p;
+        const y = a.y + (b.y-a.y)*k.p;
+        // fade in/out at the ends of the journey
+        const fade = Math.min(1, k.p*4, (1-k.p)*4);
+        // bright core
+        ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI*2);
+        ctx.fillStyle = k.color; ctx.globalAlpha = .95*fade; ctx.fill();
+        // glow trail
+        ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI*2);
+        ctx.globalAlpha = .18*fade; ctx.fill();
+        ctx.globalAlpha = 1;
       }
-      const pulse = reduced ? 1 : 1 + .18*Math.sin(t*2 + p.phase);
+    }
+
+    // nodes with visible pulse + halo ripple
+    for(const p of nodes){
+      const pulse = reduced ? 1 : 1 + .30*Math.sin(t*1.6 + p.phase);
       const c = COLORS[p.type];
+      // ripple ring (expands & fades on a loop) — only for equip & vs nodes to keep it calm
+      if(!reduced && (p.type==='equip' || p.type==='vs')){
+        const rip = (t*.5 + p.phase) % 1;               // 0→1 loop
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r + rip*22, 0, Math.PI*2);
+        ctx.strokeStyle = c; ctx.globalAlpha = .22*(1-rip); ctx.lineWidth = 1;
+        ctx.stroke(); ctx.globalAlpha = 1;
+      }
+      // core
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r*pulse, 0, Math.PI*2);
-      ctx.fillStyle = c; ctx.globalAlpha = .9; ctx.fill();
+      ctx.fillStyle = c; ctx.globalAlpha = .95; ctx.fill();
       // halo
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r*pulse*2.6, 0, Math.PI*2);
-      ctx.globalAlpha = .08; ctx.fill();
+      ctx.arc(p.x, p.y, p.r*pulse*2.8, 0, Math.PI*2);
+      ctx.globalAlpha = .10; ctx.fill();
       ctx.globalAlpha = 1;
     }
+
     if(!reduced) requestAnimationFrame(frame);
   }
 
   function init(){ resize(); build(); frame(); }
   window.addEventListener('resize', ()=>{ resize(); build(); if(reduced) frame(); });
+  window.addEventListener('pointermove', e=>{
+    mouseX = e.clientX / window.innerWidth;
+    mouseY = e.clientY / window.innerHeight;
+  }, {passive:true});
   init();
 })();
 
