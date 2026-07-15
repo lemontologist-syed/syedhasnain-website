@@ -414,7 +414,7 @@ footer{padding:70px 32px 46px;border-top:1px solid var(--line)}
 (function(){
   const canvas = document.getElementById('graph');
   const ctx = canvas.getContext('2d');
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduced = false; /* animation always on per site owner's preference */
   const COLORS = {point:'#f2c94c', equip:'#6fcf97', loc:'#eb5757', vs:'#2f80ed'};
   const TYPES = ['point','point','point','point','point','equip','equip','equip','loc','vs','vs'];
   let W,H,nodes=[],edges=[],packets=[],dpr=1;
@@ -437,8 +437,8 @@ footer{padding:70px 32px 46px;border-top:1px solid var(--line)}
         hx:Math.random()*W, hy:Math.random()*H,
         x:0, y:0,
         driftA:Math.random()*Math.PI*2,          // drift angle
-        driftS:.35 + Math.random()*.45,          // drift speed (px/frame) — clearly visible
-        orbitR:6 + Math.random()*14,             // wobble radius
+        driftS:.55 + Math.random()*.55,          // drift speed (px/frame) — clearly visible
+        orbitR:10 + Math.random()*18,             // wobble radius
         orbitS:.4 + Math.random()*.8,            // wobble speed
         r: type==='equip' ? 3.6 : type==='vs' ? 3.2 : 2.6,
         type, phase:Math.random()*Math.PI*2,
@@ -506,7 +506,7 @@ footer{padding:70px 32px 46px;border-top:1px solid var(--line)}
 
     // data packets flowing along edges
     if(!reduced){
-      if(Math.random()<.06 && packets.length<14) spawnPacket();
+      if(Math.random()<.10 && packets.length<18) spawnPacket();
       for(let i=packets.length-1;i>=0;i--){
         const k = packets[i];
         k.p += k.speed;
