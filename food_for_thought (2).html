@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Food for Thought — personal reflections by Syed Mostasim Hasnain Saif.">
+<title>Food for Thought — Syed Saif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e14;
+  --panel:#111722;
+  --panel-2:#151c28;
+  --paper:#f2f4f8;
+  --muted:#9ba6b8;
+  --line:rgba(242,244,248,.13);
+  --blue:#2f80ed;
+  --purple:#9b7bff;
+  --glow:rgba(47,128,237,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 50% -10%,rgba(47,128,237,.13),transparent 34%),
+    radial-gradient(circle at 100% 10%,rgba(155,123,255,.08),transparent 24%),
+    var(--bg);
+  color:var(--paper);
+  font-family:Inter,system-ui,sans-serif;
+  line-height:1.65;
+}
+button,input,textarea{font:inherit}
+a{color:inherit;text-decoration:none}
+[hidden]{display:none!important}
+
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:20;
+  border-bottom:1px solid var(--line);
+  background:rgba(11,14,20,.88);
+  backdrop-filter:blur(16px);
+}
+.topbar-inner{
+  max-width:980px;
+  margin:0 auto;
+  padding:15px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+.back{
+  appearance:none;
+  border:0;
+  background:transparent;
+  padding:0;
+  color:var(--muted);
+  cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.back:hover,.back:focus-visible{color:var(--paper)}
+.brand{font-weight:600}
+.page{max-width:980px;margin:0 auto;padding:42px 18px 90px}
+
+.eyebrow,.topic-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--blue);
+}
+.eyebrow{margin-bottom:14px}
+
+.home-view{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  min-height:720px;
+  border:1px solid rgba(242,244,248,.08);
+  border-radius:30px;
+  background:
+    linear-gradient(180deg,rgba(17,23,34,.72),rgba(12,17,26,.92));
+  box-shadow:0 28px 90px rgba(0,0,0,.24);
+}
+.home-content{
+  position:relative;
+  z-index:2;
+  padding:44px 30px 30px;
+}
+.hero-copy{
+  max-width:680px;
+  padding:8px 6px 0 2px;
+}
+h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(43px,8vw,82px);
+  line-height:.96;
+  letter-spacing:-.055em;
+  margin:0;
+}
+.hero-text{
+  max-width:660px;
+  margin:22px 0 0;
+  color:#c7cfdb;
+  font-size:17px;
+}
+.hero-subtle{
+  margin:16px 0 0;
+  color:#95a3ba;
+  font-size:13px;
+}
+
+.topic-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+  margin-top:34px;
+}
+.topic-button{
+  appearance:none;
+  width:100%;
+  min-height:245px;
+  padding:24px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:linear-gradient(180deg,rgba(21,28,40,.92),rgba(15,20,30,.96));
+  color:var(--paper);
+  text-align:left;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:30px;
+  box-shadow:0 18px 52px rgba(0,0,0,.18);
+  transition:transform .2s ease,border-color .2s ease,background .2s ease;
+  backdrop-filter:blur(2px);
+}
+.topic-button:hover,.topic-button:focus-visible{
+  transform:translateY(-4px);
+  border-color:rgba(47,128,237,.58);
+  background:linear-gradient(180deg,rgba(25,35,52,.98),rgba(15,20,30,.98));
+  outline:none;
+}
+.topic-number{
+  font-family:'IBM Plex Mono',monospace;
+  color:var(--blue);
+  font-size:11px;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+.topic-title{
+  display:block;
+  max-width:440px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(28px,4vw,42px);
+  line-height:1.02;
+  letter-spacing:-.04em;
+}
+.topic-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  color:var(--muted);
+  font-size:13px;
+}
+.topic-arrow{font-size:20px;color:var(--paper)}
+.home-note{margin:16px 2px 0;color:#7d8ba2;font-size:12px}
+
+.ambient-art{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  overflow:hidden;
+}
+.ambient{
+  position:absolute;
+  fill:none;
+  stroke:rgba(170,204,255,.28);
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:drop-shadow(0 0 9px rgba(47,128,237,.12));
+}
+.ambient.soft{stroke:rgba(194,214,255,.16)}
+.ambient strong,.ambient .strong{stroke:rgba(187,218,255,.34)}
+.ambient .fill-soft{fill:rgba(95,145,255,.05);stroke:rgba(187,218,255,.2)}
+.ambient .pulse-dot{fill:rgba(187,218,255,.28);stroke:none}
+.ambient-one{
+  width:min(72vw,760px);
+  left:-14px;
+  top:36px;
+  opacity:.6;
+}
+.ambient-two{
+  width:min(48vw,470px);
+  right:-8px;
+  top:68px;
+  opacity:.55;
+}
+.ambient-three{
+  width:min(72vw,760px);
+  left:70px;
+  bottom:36px;
+  opacity:.52;
+}
+
+.draw path,.draw line,.draw polyline,.draw circle,.draw ellipse,.draw rect{
+  stroke-dasharray:420;
+  stroke-dashoffset:420;
+  animation:drawLine 16s ease-in-out infinite;
+}
+.draw [data-len="small"]{stroke-dasharray:170;stroke-dashoffset:170}
+.draw [data-len="medium"]{stroke-dasharray:260;stroke-dashoffset:260}
+.draw [data-len="large"]{stroke-dasharray:520;stroke-dashoffset:520}
+.draw [data-delay="1"]{animation-delay:.5s}
+.draw [data-delay="2"]{animation-delay:1s}
+.draw [data-delay="3"]{animation-delay:1.5s}
+.draw [data-delay="4"]{animation-delay:2s}
+.draw [data-delay="5"]{animation-delay:2.5s}
+.draw [data-delay="6"]{animation-delay:3s}
+.draw [data-delay="7"]{animation-delay:3.5s}
+.draw [data-delay="8"]{animation-delay:4s}
+.draw [data-delay="9"]{animation-delay:4.5s}
+.draw [data-delay="10"]{animation-delay:5s}
+.draw [data-delay="11"]{animation-delay:5.5s}
+.draw [data-delay="12"]{animation-delay:6s}
+.draw [data-delay="13"]{animation-delay:6.5s}
+.draw [data-delay="14"]{animation-delay:7s}
+.draw [data-delay="15"]{animation-delay:7.5s}
+.draw [data-delay="16"]{animation-delay:8s}
+.draw [data-delay="17"]{animation-delay:8.5s}
+.draw [data-delay="18"]{animation-delay:9s}
+.draw [data-delay="19"]{animation-delay:9.5s}
+.draw [data-delay="20"]{animation-delay:10s}
+.draw [data-delay="21"]{animation-delay:10.5s}
+.draw [data-delay="22"]{animation-delay:11s}
+
+.floaty{animation:floaty 9s ease-in-out infinite}
+.floaty.slow{animation-duration:13s}
+.floaty.fast{animation-duration:7s}
+.pulse{animation:pulse 4.4s ease-in-out infinite}
+.pulse.delay{animation-delay:1.8s}
+.think-orbit{animation:orbit 12s linear infinite; transform-origin:center}
+
+@keyframes drawLine{
+  0%,10%{stroke-dashoffset:420;opacity:0}
+  18%,75%{stroke-dashoffset:0;opacity:1}
+  100%{stroke-dashoffset:-40;opacity:.12}
+}
+@keyframes floaty{
+  0%,100%{transform:translateY(0) translateX(0)}
+  50%{transform:translateY(-10px) translateX(5px)}
+}
+@keyframes pulse{
+  0%,100%{opacity:.2;transform:scale(.92)}
+  50%{opacity:.95;transform:scale(1.08)}
+}
+@keyframes orbit{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
+.discussion-view{max-width:760px;margin:0 auto}
+.topic-heading{margin-bottom:28px}
+.topic-label{margin-bottom:12px}
+.discussion-view h1{
+  font-size:clamp(34px,6vw,62px);
+  line-height:1.02;
+  letter-spacing:-.045em;
+}
+.status-card,.comments-card{
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:linear-gradient(180deg,rgba(21,28,40,.96),rgba(15,20,30,.98));
+  box-shadow:0 22px 70px rgba(0,0,0,.3);
+}
+.status-card{padding:22px}
+.status-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.avatar{
+  width:46px;
+  height:46px;
+  flex:0 0 46px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  font-weight:700;
+  box-shadow:0 0 0 5px rgba(47,128,237,.1);
+}
+.status-name{font-weight:650}
+.status-meta{font-size:12px;color:var(--muted)}
+.status-body{font-size:17px;line-height:1.82;color:#d9e0eb;margin:0}
+.status-actions{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:20px;
+  padding-top:12px;
+  border-top:1px solid var(--line);
+}
+.action{
+  appearance:none;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  padding:10px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+}
+.action:hover,.action:focus-visible{background:rgba(255,255,255,.045);color:var(--paper);outline:none}
+.action.liked{color:var(--blue)}
+.comments-card{margin-top:18px;padding:20px}
+.comments-title{font-family:'Space Grotesk',sans-serif;font-size:23px;margin:0 0 4px}
+.comments-note{margin:0 0 18px;color:var(--muted);font-size:12.5px}
+.comment-form{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  align-items:end;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:rgba(255,255,255,.02);
+}
+.form-fields{display:grid;gap:9px}
+input,textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#0c111a;
+  color:var(--paper);
+  padding:11px 12px;
+  outline:none;
+}
+textarea{min-height:84px;resize:vertical}
+input:focus,textarea:focus{border-color:rgba(47,128,237,.7)}
+.post-btn{
+  appearance:none;
+  border:1px solid var(--blue);
+  border-radius:12px;
+  background:var(--blue);
+  color:#fff;
+  font-weight:700;
+  padding:12px 17px;
+  cursor:pointer;
+}
+.post-btn:hover,.post-btn:focus-visible{filter:brightness(1.08);outline:none}
+.comment-list{display:grid;gap:12px;margin-top:18px}
+.comment{display:grid;grid-template-columns:38px 1fr;gap:10px}
+.comment-avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#27344a;
+  color:#dce7fa;
+  font-weight:700;
+  font-size:13px;
+}
+.comment-bubble{
+  min-width:0;
+  background:var(--panel-2);
+  border:1px solid rgba(242,244,248,.08);
+  border-radius:16px;
+  padding:11px 13px;
+}
+.comment-name{font-weight:700;font-size:13px}
+.comment-time{font-size:10px;color:var(--muted);margin-left:7px}
+.comment-text{
+  margin:5px 0 0;
+  color:#d4dbe6;
+  white-space:pre-wrap;
+  word-break:break-word;
+  font-size:14px;
+}
+.empty{
+  padding:18px;
+  text-align:center;
+  border:1px dashed var(--line);
+  border-radius:14px;
+  color:var(--muted);
+  font-size:13px;
+}
+.community-note{margin-top:16px;color:#7e8ba0;font-size:11px;line-height:1.6}
+.copy-status{min-height:18px;margin:8px 0 0;text-align:center;color:var(--muted);font-size:11px}
+
+@media(max-width:850px){
+  .home-view{min-height:760px}
+  .ambient-one{width:min(88vw,740px);left:-80px;top:46px}
+  .ambient-two{width:min(60vw,430px);right:-30px;top:210px}
+  .ambient-three{width:min(92vw,760px);left:-10px;bottom:28px}
+}
+@media(max-width:700px){
+  .topic-grid{grid-template-columns:1fr}
+  .topic-button{min-height:205px}
+  .home-view{min-height:920px}
+  .hero-copy{max-width:none}
+}
+@media(max-width:600px){
+  .topbar-inner{padding:12px 15px}
+  .page{padding-top:30px}
+  .status-card,.comments-card,.topic-button,.home-view{border-radius:18px}
+  .home-content{padding:30px 18px 24px}
+  .status-card{padding:17px}
+  .status-body{font-size:15.5px}
+  .comment-form{grid-template-columns:1fr}
+  .post-btn{width:100%}
+  .status-actions{font-size:13px}
+  .brand{font-size:14px}
+  .hero-text{font-size:15.5px}
+  .ambient-two{width:min(70vw,320px);top:250px;right:-25px}
+  .ambient-three{width:min(100vw,760px);left:-45px;bottom:38px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="back" id="backButton" type="button">← Back to discussions</button>
+    <span class="brand">syedsaif.space</span>
+  </div>
+</header>
+
+<main class="page">
+  <section id="homeView" class="home-view" aria-labelledby="homeTitle">
+    <div class="ambient-art" aria-hidden="true">
+      <svg class="ambient ambient-one draw floaty" viewBox="0 0 760 260" role="presentation">
+        <path data-len="large" data-delay="1" d="M34 192 C104 192, 132 190, 190 190 S306 190, 360 190 462 190, 520 190 610 190, 714 190" class="soft"></path>
+        <g>
+          <circle cx="62" cy="154" r="18" data-len="small" data-delay="2"></circle>
+          <path d="M52 154h20M62 144v20" data-len="small" data-delay="3"></path>
+          <path d="M78 170c11 7 18 13 24 20" data-len="small" data-delay="4"></path>
+        </g>
+        <g>
+          <rect x="128" y="146" width="46" height="30" rx="4" data-len="medium" data-delay="5"></rect>
+          <path d="M141 146v-11h20v11" data-len="small" data-delay="6"></path>
+          <path d="M174 161h37" data-len="small" data-delay="7"></path>
+          <path d="M206 156l10 5-10 5" data-len="small" data-delay="8"></path>
+        </g>
+        <g>
+          <circle cx="259" cy="137" r="12" data-len="small" data-delay="9"></circle>
+          <path d="M259 149v28M259 159l-16 11M259 159l14 10M259 177l-16 16M259 177l14 15" data-len="medium" data-delay="10"></path>
+          <path d="M286 161h34" data-len="small" data-delay="11"></path>
+          <path d="M315 156l10 5-10 5" data-len="small" data-delay="12"></path>
+        </g>
+        <g>
+          <circle cx="371" cy="124" r="12" data-len="small" data-delay="13"></circle>
+          <path d="M371 136v33M371 150l14 10M371 150l-11 5M371 169l-9 20M371 169l17 19" data-len="medium" data-delay="14"></path>
+          <path d="M407 157h40" data-len="small" data-delay="15"></path>
+          <path d="M442 152l10 5-10 5" data-len="small" data-delay="16"></path>
+        </g>
+        <g>
+          <circle cx="495" cy="114" r="12" data-len="small" data-delay="17"></circle>
+          <path d="M495 126v38M495 140l-15 7M495 140l18 12M495 164l-10 25M495 164l18 23" data-len="medium" data-delay="18"></path>
+          <path d="M532 154h42" data-len="small" data-delay="19"></path>
+          <path d="M569 149l10 5-10 5" data-len="small" data-delay="20"></path>
+        </g>
+        <g>
+          <circle cx="630" cy="102" r="13" data-len="small" data-delay="21"></circle>
+          <path d="M630 116v43M630 131l-21 9M630 131l21 9M630 159l-17 28M630 159l17 28" data-len="medium" data-delay="22"></path>
+          <circle cx="606" cy="76" r="6" class="pulse-dot pulse"></circle>
+          <circle cx="654" cy="72" r="5" class="pulse-dot pulse delay"></circle>
+          <circle cx="670" cy="106" r="4" class="pulse-dot pulse"></circle>
+        </g>
+      </svg>
+
+      <svg class="ambient ambient-two draw floaty slow" viewBox="0 0 460 360" role="presentation">
+        <ellipse cx="72" cy="108" rx="48" ry="66" data-len="medium" data-delay="1" class="soft"></ellipse>
+        <path d="M66 87c-10 10-15 28-8 42 6 12 19 20 32 22 16 2 29-4 37-16" data-len="medium" data-delay="2"></path>
+        <circle cx="88" cy="94" r="10" data-len="small" data-delay="3"></circle>
+        <path d="M83 94q5-9 12 0M87 90v8" data-len="small" data-delay="4"></path>
+
+        <circle cx="176" cy="106" r="15" data-len="small" data-delay="5"></circle>
+        <path d="M176 122c-10 8-18 23-20 42m20-25c-11 3-22 18-24 30m24-30c14 5 19 16 22 28m-6 4c-12 4-21 19-24 32m24-32c12 5 19 14 25 25" data-len="large" data-delay="6"></path>
+        <path d="M168 103c3-5 12-7 16 0 2 3 2 8 0 11m-18-11c4 2 6 6 7 11m11-11c4 2 6 6 7 11" data-len="medium" data-delay="7"></path>
+
+        <circle cx="286" cy="92" r="17" data-len="small" data-delay="8"></circle>
+        <path d="M286 110v58M286 128l-22 14M286 128l24 12M286 168l-18 34M286 168l25 36" data-len="large" data-delay="9"></path>
+        <path d="M275 91c4-8 18-8 22 0m-21 0c3 1 5 4 6 8m9-8c4 2 6 5 7 8m-25 2h27" data-len="medium" data-delay="10"></path>
+
+        <circle cx="392" cy="76" r="19" data-len="small" data-delay="11"></circle>
+        <path d="M392 95v88M392 118l-30 18M392 118l32 18M392 183l-25 52M392 183l28 50" data-len="large" data-delay="12"></path>
+        <path d="M378 74c4-10 25-10 29 0m-29 0c4 2 7 6 9 12m11-12c4 3 7 7 9 12m-32 5h33" data-len="medium" data-delay="13"></path>
+
+        <circle cx="388" cy="44" r="5" class="pulse-dot pulse"></circle>
+        <circle cx="417" cy="54" r="4" class="pulse-dot pulse delay"></circle>
+        <circle cx="430" cy="82" r="5" class="pulse-dot pulse"></circle>
+        <circle cx="354" cy="61" r="4" class="pulse-dot pulse delay"></circle>
+      </svg>
+
+      <svg class="ambient ambient-three draw floaty fast" viewBox="0 0 760 300" role="presentation">
+        <path d="M94 220c66-24 122-24 166 0 45 24 89 24 134-2 47-27 110-27 168 0 25 12 52 18 84 18" data-len="large" data-delay="1" class="soft"></path>
+
+        <g>
+          <circle cx="114" cy="196" r="8" data-len="small" data-delay="2"></circle>
+          <circle cx="140" cy="186" r="5" class="pulse-dot pulse"></circle>
+          <circle cx="152" cy="208" r="4" class="pulse-dot pulse delay"></circle>
+          <path d="M122 196h28M113 204l20 12" data-len="small" data-delay="3"></path>
+        </g>
+
+        <g>
+          <circle cx="252" cy="178" r="11" data-len="small" data-delay="4"></circle>
+          <circle cx="233" cy="160" r="4" class="pulse-dot pulse"></circle>
+          <circle cx="272" cy="159" r="5" class="pulse-dot pulse delay"></circle>
+          <circle cx="287" cy="185" r="4" class="pulse-dot pulse"></circle>
+          <circle cx="232" cy="194" r="4" class="pulse-dot pulse delay"></circle>
+          <path d="M252 178l-19-18M252 178l20-19M252 178l35 7M252 178l-20 16" data-len="medium" data-delay="5"></path>
+        </g>
+
+        <g>
+          <circle cx="402" cy="156" r="16" data-len="small" data-delay="6"></circle>
+          <path d="M402 172v44M402 186l-20 16M402 186l23 14M402 216l-16 28M402 216l18 28" data-len="large" data-delay="7"></path>
+          <circle cx="374" cy="126" r="4" class="pulse-dot pulse"></circle>
+          <circle cx="399" cy="116" r="5" class="pulse-dot pulse delay"></circle>
+          <circle cx="425" cy="121" r="4" class="pulse-dot pulse"></circle>
+          <circle cx="443" cy="145" r="5" class="pulse-dot pulse delay"></circle>
+          <circle cx="433" cy="175" r="4" class="pulse-dot pulse"></circle>
+          <circle cx="375" cy="175" r="4" class="pulse-dot pulse delay"></circle>
+          <path d="M402 156l-28-30M402 156l-3-40M402 156l23-35M402 156l41-11M402 156l31 19M402 156l-27 19" data-len="large" data-delay="8"></path>
+        </g>
+
+        <g>
+          <circle cx="596" cy="132" r="18" data-len="small" data-delay="9"></circle>
+          <path d="M596 150v66M596 168l-26 16M596 168l28 16M596 216l-20 41M596 216l21 41" data-len="large" data-delay="10"></path>
+          <g class="think-orbit">
+            <circle cx="596" cy="96" r="40" data-len="medium" data-delay="11"></circle>
+          </g>
+          <circle cx="558" cy="95" r="4" class="pulse-dot pulse"></circle>
+          <circle cx="631" cy="102" r="5" class="pulse-dot pulse delay"></circle>
+          <circle cx="614" cy="61" r="4" class="pulse-dot pulse"></circle>
+          <circle cx="581" cy="62" r="4" class="pulse-dot pulse delay"></circle>
+          <circle cx="591" cy="109" r="6" class="pulse-dot pulse"></circle>
+          <path d="M596 132l-38-37M596 132l18-71M596 132l35-30M596 132l-5-23M596 132l18 22M596 132l-34 10" data-len="large" data-delay="12"></path>
+        </g>
+      </svg>
+    </div>
+
+    <div class="home-content">
+      <div class="hero-copy">
+        <div class="eyebrow">Personal reflections · Open discussion</div>
+        <h1 id="homeTitle">Food for<br>Thought</h1>
+        <p class="hero-text">I deeply appreciate the ways people think about things that may seem ordinary, obvious, or too familiar to question. When we pause and develop our own interpretation of such things, life becomes richer, more personal, and more honest. To me, what truly helps us grow is not a degree or money, but thought itself: the ability to reflect, interpret, and mature through what we understand.</p>
+        <p class="hero-subtle">Choose a topic below and share how you see it.</p>
+      </div>
+
+      <div class="topic-grid" aria-label="Discussion topics">
+        <button class="topic-button" type="button" data-topic="elastic-relationship-with-god">
+          <span class="topic-number">Topic 1</span>
+          <span class="topic-title">Elastic relationship with God</span>
+          <span class="topic-footer"><span>Read and discuss</span><span class="topic-arrow" aria-hidden="true">→</span></span>
+        </button>
+
+        <button class="topic-button" type="button" data-topic="human-frequencies">
+          <span class="topic-number">Topic 2</span>
+          <span class="topic-title">We all are certain frequencies</span>
+          <span class="topic-footer"><span>Read and discuss</span><span class="topic-arrow" aria-hidden="true">→</span></span>
+        </button>
+      </div>
+
+      <p class="home-note">Each topic keeps its own likes and comments in this browser.</p>
+    </div>
+  </section>
+
+  <section id="discussionView" class="discussion-view" hidden aria-live="polite">
+    <header class="topic-heading">
+      <div class="topic-label" id="topicLabel"></div>
+      <h1 id="topicTitle"></h1>
+    </header>
+
+    <article class="status-card">
+      <header class="status-head">
+        <div class="avatar">SS</div>
+        <div>
+          <div class="status-name">Syed Mostasim Hasnain Saif</div>
+          <div class="status-meta">Personal reflection · Public</div>
+        </div>
+      </header>
+      <p class="status-body" id="topicBody"></p>
+      <div class="status-actions">
+        <button class="action" id="likeButton" type="button">Like</button>
+        <button class="action" id="commentButton" type="button">Comment</button>
+        <button class="action" id="copyButton" type="button">Copy link</button>
+      </div>
+      <p class="copy-status" id="copyStatus" role="status"></p>
+    </article>
+
+    <section class="comments-card" aria-labelledby="commentsTitle">
+      <h2 class="comments-title" id="commentsTitle">Comments</h2>
+      <p class="comments-note">Add your perspective respectfully. In this standalone page, comments are saved in this browser; a shared public database can be connected when the community room is deployed.</p>
+      <form class="comment-form" id="commentForm">
+        <div class="form-fields">
+          <input id="commentName" maxlength="60" placeholder="Your name" autocomplete="name" required>
+          <textarea id="commentText" maxlength="1500" placeholder="Write a comment…" required></textarea>
+        </div>
+        <button class="post-btn" type="submit">Post</button>
+      </form>
+      <div class="comment-list" id="commentList" aria-live="polite"></div>
+      <p class="community-note">The page is already structured for a public comment backend. Connecting Supabase, Firebase, or a moderated discussion service will make comments visible to every visitor.</p>
+    </section>
+  </section>
+</main>
+
+<script>
+(() => {
+  const WEBSITE_DISCUSSIONS_URL = './index_personal_original_scientific_v8_discussion_research.html#hobbies';
+
+  const topics = {
+    'elastic-relationship-with-god': {
+      label: "Topic 1 · Let's discuss",
+      title: 'Elastic relationship with God',
+      body: 'I think of the relationship between a person and God as elastic, rather like a spring. At times it stretches so far that the divine feels distant; at other times it contracts, and the connection feels immediate and intimate. That changing distance does not mean the bond has disappeared. Perhaps distance is what allows us to recognise the halo of closeness, just as silence can make a familiar voice more precious. Faith, to me, is not a constant emotional intensity but a living relationship that expands and contracts while remaining fundamentally unbroken.',
+      storageKey: 'syedsaif:discussion:elastic-faith'
+    },
+    'human-frequencies': {
+      label: "Topic 2 · Let's discuss",
+      title: 'We all are certain frequencies',
+      body: 'I sometimes imagine human beings as frequencies whose patterns change across the different phases of life. When our inner frequency resonates with another person’s, connection feels natural: we meet, understand one another, and create memories within that shared interval. Experience eventually alters us, and the frequencies may drift apart. Separation does not invalidate what was once genuine; it simply means that the resonance belonged to a particular season. People enter our lives, influence us, and sometimes leave, while the meaning of the time we shared continues to travel with us.',
+      storageKey: 'syedsaif:discussion:human-frequencies'
+    }
+  };
+
+  const homeView = document.getElementById('homeView');
+  const discussionView = document.getElementById('discussionView');
+  const backButton = document.getElementById('backButton');
+  const topicLabel = document.getElementById('topicLabel');
+  const topicTitle = document.getElementById('topicTitle');
+  const topicBody = document.getElementById('topicBody');
+  const likeButton = document.getElementById('likeButton');
+  const commentButton = document.getElementById('commentButton');
+  const copyButton = document.getElementById('copyButton');
+  const copyStatus = document.getElementById('copyStatus');
+  const form = document.getElementById('commentForm');
+  const nameInput = document.getElementById('commentName');
+  const textInput = document.getElementById('commentText');
+  const list = document.getElementById('commentList');
+
+  let activeTopicId = null;
+
+  const getTopicFromHash = () => {
+    const id = decodeURIComponent(location.hash.replace(/^#/, ''));
+    return Object.prototype.hasOwnProperty.call(topics, id) ? id : null;
+  };
+
+  const readComments = key => {
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || '[]');
+      return Array.isArray(value) ? value : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const writeComments = (key, comments) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(comments));
+    } catch {
+      copyStatus.textContent = 'This browser could not save the comment.';
+    }
+  };
+
+  const initials = name => (
+    name.trim().split(/\s+/).slice(0, 2).map(part => part[0]?.toUpperCase() || '').join('') || '?'
+  );
+
+  const formatTime = iso => {
+    try {
+      return new Intl.DateTimeFormat(undefined, {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      }).format(new Date(iso));
+    } catch {
+      return '';
+    }
+  };
+
+  function renderComments() {
+    list.innerHTML = '';
+    if (!activeTopicId) return;
+
+    const comments = readComments(topics[activeTopicId].storageKey);
+    if (!comments.length) {
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'No comments yet. Begin the conversation.';
+      list.appendChild(empty);
+      return;
+    }
+
+    comments.forEach(item => {
+      const row = document.createElement('article');
+      row.className = 'comment';
+
+      const avatar = document.createElement('div');
+      avatar.className = 'comment-avatar';
+      avatar.textContent = initials(item.name || '');
+
+      const bubble = document.createElement('div');
+      bubble.className = 'comment-bubble';
+
+      const head = document.createElement('div');
+      const name = document.createElement('span');
+      name.className = 'comment-name';
+      name.textContent = item.name || 'Anonymous';
+
+      const time = document.createElement('span');
+      time.className = 'comment-time';
+      time.textContent = formatTime(item.time);
+
+      const body = document.createElement('p');
+      body.className = 'comment-text';
+      body.textContent = item.text || '';
+
+      head.append(name, time);
+      bubble.append(head, body);
+      row.append(avatar, bubble);
+      list.appendChild(row);
+    });
+  }
+
+  function updateLikeButton() {
+    if (!activeTopicId) return;
+    const likeKey = topics[activeTopicId].storageKey + ':likes';
+    const liked = localStorage.getItem(likeKey) === '1';
+    likeButton.textContent = liked ? 'Liked' : 'Like';
+    likeButton.classList.toggle('liked', liked);
+    likeButton.setAttribute('aria-pressed', String(liked));
+  }
+
+  function showHome() {
+    activeTopicId = null;
+    homeView.hidden = false;
+    discussionView.hidden = true;
+    backButton.textContent = '← Back to discussions';
+    document.title = 'Food for Thought — Syed Saif';
+    copyStatus.textContent = '';
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  function showTopic(topicId) {
+    const topic = topics[topicId];
+    if (!topic) {
+      showHome();
+      return;
+    }
+
+    activeTopicId = topicId;
+    topicLabel.textContent = topic.label;
+    topicTitle.textContent = topic.title;
+    topicBody.textContent = topic.body;
+    document.title = topic.title + ' — Food for Thought';
+
+    homeView.hidden = true;
+    discussionView.hidden = false;
+    backButton.textContent = '← Food for Thought';
+    copyStatus.textContent = '';
+    textInput.value = '';
+
+    updateLikeButton();
+    renderComments();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  function syncViewToHash() {
+    const topicId = getTopicFromHash();
+    if (topicId) showTopic(topicId);
+    else showHome();
+  }
+
+  document.querySelectorAll('[data-topic]').forEach(button => {
+    button.addEventListener('click', () => {
+      const topicId = button.dataset.topic;
+      if (location.hash === '#' + topicId) showTopic(topicId);
+      else location.hash = topicId;
+    });
+  });
+
+  backButton.addEventListener('click', () => {
+    if (activeTopicId) {
+      location.hash = '';
+    } else {
+      location.href = WEBSITE_DISCUSSIONS_URL;
+    }
+  });
+
+  likeButton.addEventListener('click', () => {
+    if (!activeTopicId) return;
+    const likeKey = topics[activeTopicId].storageKey + ':likes';
+    const nextValue = localStorage.getItem(likeKey) === '1' ? '0' : '1';
+    localStorage.setItem(likeKey, nextValue);
+    updateLikeButton();
+  });
+
+  commentButton.addEventListener('click', () => textInput.focus());
+
+  copyButton.addEventListener('click', async () => {
+    const url = location.href;
+    let copied = false;
+
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(url);
+        copied = true;
+      } else {
+        const helper = document.createElement('textarea');
+        helper.value = url;
+        helper.setAttribute('readonly', '');
+        helper.style.position = 'fixed';
+        helper.style.opacity = '0';
+        document.body.appendChild(helper);
+        helper.select();
+        copied = document.execCommand('copy');
+        helper.remove();
+      }
+    } catch {
+      copied = false;
+    }
+
+    copyStatus.textContent = copied
+      ? 'Topic link copied.'
+      : 'Copying was blocked. Copy the address from your browser.';
+
+    window.setTimeout(() => {
+      copyStatus.textContent = '';
+    }, 2500);
+  });
+
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (!activeTopicId) return;
+
+    const name = nameInput.value.trim();
+    const text = textInput.value.trim();
+    if (!name || !text) return;
+
+    const key = topics[activeTopicId].storageKey;
+    const comments = readComments(key);
+    comments.push({name, text, time: new Date().toISOString()});
+    writeComments(key, comments);
+    textInput.value = '';
+    renderComments();
+  });
+
+  window.addEventListener('hashchange', syncViewToHash);
+  window.addEventListener('storage', event => {
+    if (!activeTopicId) return;
+    const key = topics[activeTopicId].storageKey;
+    if (event.key === key) renderComments();
+    if (event.key === key + ':likes') updateLikeButton();
+  });
+
+  syncViewToHash();
+})();
+</script>
+</body>
+</html>
