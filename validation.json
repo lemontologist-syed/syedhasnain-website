@@ -1,0 +1,19 @@
+{
+  "unique_gifs": 18,
+  "scripts_syntax_checked": 7,
+  "missing_local_references": [],
+  "duplicate_ids": [],
+  "embedded_documents_preserved": true,
+  "section_order": [
+    "about",
+    "research",
+    "publications",
+    "recognition",
+    "currents",
+    "stories",
+    "hobbies",
+    "study",
+    "contact"
+  ],
+  "visual_preview": "Unavailable: local browser preview blocked"
+}
